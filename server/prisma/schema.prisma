@@ -1,0 +1,444 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String         @id @default(uuid())
+  email          String         @unique
+  passwordHash   String
+  name           String
+  mobile         String?
+  role           String         @default("ENTREPRENEUR") // ENTREPRENEUR, DEPARTMENT_OFFICER, SENIOR_OFFICER, ADMIN
+  designation    String?
+  departmentCode String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  companies      Company[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]
+}
+
+model Company {
+  id                  String     @id @default(uuid())
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  cin                 String?
+  pan                 String?
+  gstin               String?
+  udyam               String?
+  companyType         String     @default("Private Limited") // Proprietorship, Partnership, LLP, Private Limited, Public Limited, Startup, Other
+  dateOfIncorporation String?
+  registeredAddress   String?
+  district            String?
+  taluka              String?
+  industrialArea      String?
+  directors           String?
+  employeeCount       Int        @default(0)
+  annualTurnover      Float      @default(0)
+  businessSector      String?
+  verificationStatus  String     @default("NEEDS_REVIEW") // VERIFIED, NEEDS_REVIEW, NOT_VERIFIED
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  projects            Project[]
+  documents           Document[]
+}
+
+model Project {
+  id                  String     @id @default(uuid())
+  companyId           String
+  company             Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name                String
+  projectType         String     @default("New") // New, Expansion, Modernization
+  sector              String     // Textile, Food Processing, Automobile, Electronics, Pharmaceutical, Chemical, General Manufacturing
+  businessTypeId      String?
+  businessType        BusinessType? @relation(fields: [businessTypeId], references: [id], onDelete: SetNull)
+  answersJson         String?    // Dynamic questionnaire responses JSON
+  projectStage        String?    @default("Planning") // Idea, Planning, Land Acquired, Construction, Installation, Operations
+  state               String     @default("Maharashtra")
+  district            String
+  taluka              String?
+  industrialArea      String?
+  midcPlot            String?
+  
+  landCost            Float      @default(0)
+  buildingCost        Float      @default(0)
+  machineryCost       Float      @default(0)
+  otherCost           Float      @default(0)
+  totalInvestment     Float      @default(0) // In Crores or Lakhs
+
+  productionType      String?
+  productionCapacity  String?
+  employeeCount       Int        @default(0)
+  waterReq            Float      @default(0) // KLD
+  powerReq            Float      @default(0) // kVA
+
+  waterConsumption    Float      @default(0)
+  wastewater          Float      @default(0)
+  airEmissions        String?
+  hazardousMaterials  Boolean    @default(false)
+  solidWaste          Float      @default(0)
+  hazardousWaste      Boolean    @default(false)
+
+  buildingRequired    Boolean    @default(true)
+  factoryRequired     Boolean    @default(true)
+  fireRisk            String     @default("Low") // Low, Medium, High
+  buildingArea        Float      @default(0) // sq. meters
+
+  status              String     @default("DRAFT") // DRAFT, ANALYZED, APPLICATIONS_IN_PROGRESS, APPROVED, ACTIVE_COMPLIANCE
+  healthScore         Int        @default(0)
+
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  documents           Document[]
+  applications        Application[]
+  inspections         Inspection[]
+  compliances         Compliance[]
+  renewals            Renewal[]
+  grievances          Grievance[]
+  schemeApplications  SchemeApplication[]
+}
+
+model Document {
+  id                  String     @id @default(uuid())
+  companyId           String
+  company             Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  projectId           String?
+  project             Project?   @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  category            String     // Company, Identity, Tax, Land, Project, Environmental, Factory, Financial, Technical, Certificates, Previous Approvals, Other
+  name                String
+  filePath            String
+  originalFileName    String?
+  fileType            String
+  fileSize            Int
+  extractedData       String?    // JSON stringified key-values
+  status              String     @default("UPLOADED") // UPLOADED, PROCESSING, VERIFIED, NEEDS_REVIEW, REJECTED, EXPIRED
+  issuesJson          String?    // JSON stringified array of issues
+  healthScore         Int        @default(100)
+  uploadedAt          DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  verifications       DocumentVerification[]
+}
+
+model DocumentVerification {
+  id          String    @id @default(uuid())
+  documentId  String
+  document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  checkType   String    // FORMAT, OCR_EXTRACTION, INTEGRITY, EXPIRY, CROSS_CONSISTENCY
+  status      String    // PASS, WARNING, FAIL
+  message     String
+  verifiedAt  DateTime  @default(now())
+}
+
+model Department {
+  id           String     @id @default(uuid())
+  code         String     @unique // MPCB, FIRE, DISH, MSEDCL, LABOUR, MIDC, CGWA
+  name         String
+  ministry     String
+  officerName  String?
+  contactEmail String?
+  description  String?
+  createdAt    DateTime   @default(now())
+
+  approvals    Approval[]
+  applications Application[]
+}
+
+model Approval {
+  id                     String     @id @default(uuid())
+  code                   String     @unique // MPCB_CTE, FIRE_NOC, DISH_FACTORY, MSEDCL_POWER, etc.
+  name                   String
+  departmentId           String
+  department             Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  description            String?
+  priority               String     @default("HIGH") // HIGH, MEDIUM, LOW
+  statutoryDaysSLA       Int        @default(15)
+  isInspectionRequired   Boolean    @default(false)
+  isRenewalRequired      Boolean    @default(false)
+  renewalFrequencyMonths Int        @default(12)
+  createdAt              DateTime   @default(now())
+
+  rules                  ApprovalRule[]
+  requirements           ApprovalRequirement[]
+  applications           Application[]
+  compliances            Compliance[]
+  renewals               Renewal[]
+}
+
+model ApprovalRule {
+  id             String    @id @default(uuid())
+  approvalId     String
+  approval       Approval  @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  conditionsJson String    // JSON string describing triggers
+  rationale      String
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+}
+
+model ApprovalRequirement {
+  id               String    @id @default(uuid())
+  approvalId       String
+  approval         Approval  @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  documentCategory String
+  documentName     String
+  isMandatory      Boolean   @default(true)
+  description      String?
+}
+
+model Application {
+  id                 String       @id @default(uuid())
+  projectId          String
+  project            Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  approvalId         String
+  approval           Approval     @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  departmentId       String
+  department         Department   @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  applicationNumber  String       @unique
+  status             String       @default("SUBMITTED") // DRAFT, SUBMITTED, UNDER_REVIEW, QUERY_RAISED, APPLICANT_RESPONDED, INSPECTION_SCHEDULED, INSPECTION_COMPLETED, APPROVED, REJECTED, SLA_BREACHED, WITHDRAWN
+  currentStage       String       @default("Scrutiny")
+  submittedAt        DateTime     @default(now())
+  slaDueDate         DateTime
+  slaStatus          String       @default("ON_TRACK") // ON_TRACK, APPROACHING_DEADLINE, BREACHED
+  riskScore          Int          @default(20) // 0-100
+  riskFactorsJson    String?      // JSON string of risk factor breakdown
+  preScrutinySummary String?
+  assignedOfficerId  String?
+  feePaid            Float        @default(0)
+  certificateUrl     String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  timeline           ApplicationTimeline[]
+  queries            ClarificationQuery[]
+}
+
+model ApplicationTimeline {
+  id            String      @id @default(uuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  stage         String
+  status        String
+  remarks       String?
+  actorName     String
+  actorRole     String
+  createdAt     DateTime    @default(now())
+}
+
+model ClarificationQuery {
+  id                  String      @id @default(uuid())
+  applicationId       String
+  application         Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  officerId           String?
+  queryText           String
+  responseText        String?
+  status              String      @default("PENDING") // PENDING, RESOLVED
+  queryDate           DateTime    @default(now())
+  responseDate        DateTime?
+  responseDocumentUrl String?
+}
+
+model Inspection {
+  id                  String    @id @default(uuid())
+  projectId           String
+  project             Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  applicationIdsJson  String    // JSON array of application IDs included in this joint inspection
+  departmentCodesJson String    // JSON array: ["MPCB", "FIRE", "DISH"]
+  scheduledDate       DateTime
+  timeSlot            String    @default("10:30 AM - 01:30 PM")
+  location            String
+  status              String    @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  officerNames        String?
+  checklistJson       String?   // Multi-parameter joint checklist
+  officerRemarks      String?
+  evidencePhotosJson  String?   // JSON array of photo URLs
+  reportSubmittedAt   DateTime?
+  createdAt           DateTime  @default(now())
+}
+
+model Scheme {
+  id                     String    @id @default(uuid())
+  code                   String    @unique
+  name                   String
+  department             String
+  schemeType             String    @default("Capital Subsidy") // Capital Subsidy, Interest Subvention, Stamp Duty Exemption, Power Tariff Subsidy, Employment Grant
+  minInvestment          Float     @default(0) // in Crores
+  maxInvestment          Float?
+  eligibleSectorsJson    String    // JSON array of sector names or ["ALL"]
+  eligibleLocationsJson  String    // JSON array of districts/zones e.g. ["Zone B", "Zone C", "Vidarbha", "Marathwada", "ALL"]
+  eligibleCompanyTypesJson String  // JSON array
+  minEmployees           Int       @default(0)
+  benefitsSummary        String
+  subsidyPercentage      Float?
+  maxSubsidyAmount       String?
+  officialSourceUrl      String
+  lastVerifiedDate       String
+  isActive               Boolean   @default(true)
+  detailsJson            String?   // detailed conditions & documents required
+  createdAt              DateTime  @default(now())
+
+  applications           SchemeApplication[]
+}
+
+model SchemeApplication {
+  id                 String    @id @default(uuid())
+  projectId          String
+  project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  schemeId           String
+  scheme             Scheme    @relation(fields: [schemeId], references: [id], onDelete: Cascade)
+  matchScore         Int       @default(0) // 0-100
+  matchBreakdownJson String?   // Score breakdown and why/why-not
+  status             String    @default("POTENTIALLY_ELIGIBLE") // POTENTIALLY_ELIGIBLE, APPLIED, UNDER_REVIEW, SANCTIONED, REJECTED
+  appliedAt          DateTime  @default(now())
+}
+
+model Compliance {
+  id               String    @id @default(uuid())
+  projectId        String
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  approvalId       String?
+  approval         Approval? @relation(fields: [approvalId], references: [id], onDelete: SetNull)
+  name             String
+  department       String
+  frequency        String    @default("Annual") // Monthly, Quarterly, Half-Yearly, Annual
+  dueDate          DateTime
+  status           String    @default("UPCOMING") // UPCOMING, DUE, COMPLETED, OVERDUE
+  completedDate    DateTime?
+  documentRequired String?
+  documentUrl      String?
+  remarks          String?
+  createdAt        DateTime  @default(now())
+}
+
+model Renewal {
+  id                 String    @id @default(uuid())
+  projectId          String
+  project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  approvalId         String?
+  approval           Approval? @relation(fields: [approvalId], references: [id], onDelete: SetNull)
+  licenseName        String
+  licenseNumber      String
+  issueDate          DateTime
+  expiryDate         DateTime
+  renewalWindowDays  Int       @default(60)
+  status             String    @default("ACTIVE") // ACTIVE, RENEWAL_DUE, RENEWAL_SUBMITTED, EXPIRED
+  createdAt          DateTime  @default(now())
+}
+
+model Grievance {
+  id             String    @id @default(uuid())
+  userId         String
+  projectId      String?
+  project        Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  token          String    @unique // GRV-2026-XXXXX
+  category       String    // Delay in Approval, Unreasonable Clarification, Officer Inaction, Inspection Grievance, Technical Portal Issue
+  department     String
+  description    String
+  status         String    @default("SUBMITTED") // SUBMITTED, ASSIGNED, UNDER_REVIEW, RESOLVED, CLOSED
+  officerRemarks String?
+  createdAt      DateTime  @default(now())
+  resolvedAt     DateTime?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // DOCUMENT_ISSUE, APPLICATION_UPDATE, QUERY, INSPECTION, SLA_WARNING, SLA_BREACH, APPROVAL, COMPLIANCE, RENEWAL, SCHEME_RECOMMENDATION
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Regulation {
+  id            String   @id @default(uuid())
+  title         String
+  category      String   // Environment, Fire Safety, Factory Act, Electricity, Labour, Town Planning
+  authority     String
+  summary       String
+  officialUrl   String
+  effectiveDate String
+  lastUpdated   String
+  createdAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName    String?
+  action      String   // LOGIN, DOCUMENT_UPLOAD, DOCUMENT_VERIFIED, APPLICATION_SUBMITTED, QUERY_RAISED, INSPECTION_SCHEDULED, SLA_ESCALATED, RULE_UPDATED
+  entityType  String   // APPLICATION, DOCUMENT, PROJECT, RULE, SCHEME
+  entityId    String?
+  detailsJson String?
+  ipAddress   String?  @default("127.0.0.1")
+  createdAt   DateTime @default(now())
+}
+
+model BusinessCategory {
+  id            String         @id @default(uuid())
+  code          String         @unique // PETROLEUM, HOSPITALITY, HEALTHCARE, IT_BPM, MANUFACTURING, FOOD_PROCESSING, AUTOMOBILE, PHARMACEUTICALS, etc.
+  name          String
+  icon          String?
+  description   String?
+  sortOrder     Int            @default(0)
+  createdAt     DateTime       @default(now())
+
+  businessTypes BusinessType[]
+}
+
+model BusinessType {
+  id                     String             @id @default(uuid())
+  code                   String             @unique // PETROL_PUMP, HOTEL, HOSPITAL, TEXTILE_FACTORY, PHARMACY, IT_COMPANY, FOOD_PROCESSING, etc.
+  name                   String
+  categoryId             String
+  category               BusinessCategory   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  description            String?
+  icon                   String?
+  isHazardous            Boolean            @default(false)
+  typicalInvestmentRange String?            // e.g. "₹1 Cr - ₹5 Cr"
+  governingActs          String?            // e.g. "Petroleum Act 1934, Explosives Rules 2008"
+  sortOrder              Int                @default(0)
+  createdAt              DateTime           @default(now())
+
+  questions              BusinessQuestion[]
+  projects               Project[]
+}
+
+model BusinessQuestion {
+  id                    String                   @id @default(uuid())
+  businessTypeId        String?
+  businessType          BusinessType?            @relation(fields: [businessTypeId], references: [id], onDelete: Cascade)
+  code                  String                   @unique // e.g. "PETROL_UNDERGROUND_STORAGE", "HOTEL_ROOMS_COUNT"
+  questionText          String
+  helpText              String?
+  inputType             String                   @default("TEXT") // TEXT, NUMBER, SELECT, BOOLEAN, RADIO
+  isRequired            Boolean                  @default(true)
+  dependsOnQuestionCode String?
+  dependsOnAnswerValue  String?
+  sortOrder             Int                      @default(0)
+  createdAt             DateTime                 @default(now())
+
+  options               BusinessQuestionOption[]
+}
+
+model BusinessQuestionOption {
+  id                   String           @id @default(uuid())
+  questionId           String
+  question             BusinessQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  label                String
+  value                String
+  triggersApprovalCode String?
+  sortOrder            Int              @default(0)
+}
+
