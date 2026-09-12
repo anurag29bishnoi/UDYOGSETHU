@@ -329,6 +329,252 @@ export const MASTER_BUSINESS_TYPES: BusinessTypeDefinition[] = [
 
 // 3. Dynamic Questionnaire Definitions
 export const DYNAMIC_QUESTIONS: Record<string, DynamicQuestionDefinition[]> = {
+  // ==========================================
+  // ACTIVE FOCUS: FOOD & AGRO INDUSTRIAL VENTURES
+  // ==========================================
+  FOOD_PROCESSING: [
+    {
+      code: 'FOOD_ANNUAL_TURNOVER_TIER',
+      questionText: 'What is your projected annual business turnover?',
+      helpText: 'Under ₹12L -> Basic Registration (₹100/yr) | ₹12L-20Cr -> State FSSAI License (₹2,000-5,000/yr) | > ₹20Cr -> Central FSSAI License (₹7,500/yr).',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Under ₹12 Lakhs / year (Petty Food Manufacturer - Basic Registration)', value: 'TURNOVER_UNDER_12L' },
+        { label: '₹12 Lakhs to ₹20 Crore / year (Standard Processing Unit - State FSSAI License)', value: 'TURNOVER_12L_TO_20CR' },
+        { label: 'Above ₹20 Crore / year or 100% Export Unit (Large Scale - Central FSSAI License)', value: 'TURNOVER_ABOVE_20CR' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'FOOD_DAILY_CAPACITY_MT',
+      questionText: 'What is the daily processing / manufacturing capacity?',
+      helpText: 'Units producing > 2 Metric Tons per day mandate a Central FSSAI License and industrial Effluent Treatment Plant (ETP).',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Up to 1 Metric Ton / day (Small Scale)', value: 'CAPACITY_UNDER_1MT' },
+        { label: '1 to 2 Metric Tons / day (Medium Scale)', value: 'CAPACITY_1_TO_2MT' },
+        { label: 'Above 2 Metric Tons / day (Industrial High-Volume Unit)', value: 'CAPACITY_ABOVE_2MT' }
+      ],
+      isRequired: true,
+      sortOrder: 2
+    },
+    {
+      code: 'FOOD_WATER_SOURCE',
+      questionText: 'What is the primary source of water for food washing and processing?',
+      helpText: 'Borewell / groundwater extraction requires Central Ground Water Authority (CGWA) NOC and mandatory NABL IS 10500 Potability Test.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Groundwater / Private Borewell (Requires CGWA Clearance + NABL IS 10500)', value: 'BOREWELL' },
+        { label: 'MIDC / Industrial Piped Water Connection', value: 'MIDC_PIPELINE' },
+        { label: 'Municipal Corporation / Local Body Potable Connection', value: 'MUNICIPAL' }
+      ],
+      isRequired: true,
+      sortOrder: 3
+    },
+    {
+      code: 'FOOD_EFFLUENT_KLD',
+      questionText: 'Estimated daily process wastewater / effluent discharge (in KLD)?',
+      helpText: 'Discharge > 5 KLD requires an on-site Effluent Treatment Plant (ETP) under MPCB Orange Category.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Under 5 KLD (Minimal washwater - septic tank / soak pit)', value: 'EFFLUENT_LOW' },
+        { label: '5 to 25 KLD (Standard processing effluent - Dedicated ETP required)', value: 'EFFLUENT_MED' },
+        { label: 'Above 25 KLD (High-volume effluent - Advanced ETP & ZLD required)', value: 'EFFLUENT_HIGH' }
+      ],
+      isRequired: true,
+      sortOrder: 4
+    },
+    {
+      code: 'FOOD_HAS_COLD_STORAGE',
+      questionText: 'Will you operate an on-site temperature-controlled cold room or blast freezer?',
+      helpText: 'Qualifies for MoFPI Cold Chain Capital Subsidy (up to ₹10 Crore) and requires refrigerant safety certification.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 5
+    },
+    {
+      code: 'FOOD_RETAIL_PACKAGING',
+      questionText: 'Will products be packaged in sealed branded retail consumer packs?',
+      helpText: 'Requires Legal Metrology Packaged Commodities (LMPC) registration and mandatory nutritional / allergen labeling.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 6
+    },
+    {
+      code: 'FOOD_HAS_STEAM_BOILER',
+      questionText: 'Does the plant utilize a steam boiler or biomass briquette furnace?',
+      helpText: 'Requires Indian Boiler Regulations (IBR) sanction from the Directorate of Steam Boilers.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 7
+    }
+  ],
+
+  RESTAURANT_CLOUD_KITCHEN: [
+    {
+      code: 'REST_SEATING_OR_CLOUD',
+      questionText: 'What is your primary commercial operating model?',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Dine-In Restaurant / Cafe with seating', value: 'DINE_IN' },
+        { label: 'Delivery-Only Cloud Kitchen / Commissary', value: 'CLOUD_KITCHEN' },
+        { label: 'Hybrid: Dine-In + Takeaway + Online Delivery', value: 'HYBRID' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'REST_TURNOVER_TIER',
+      questionText: 'Projected annual food sales turnover?',
+      helpText: '< ₹12 Lakhs -> FSSAI Registration | ₹12L to ₹20Cr -> FSSAI State License.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Under ₹12 Lakhs (Petty food joint / cloud kitchen)', value: 'TURNOVER_UNDER_12L' },
+        { label: '₹12 Lakhs to ₹20 Crore (Full Restaurant / Multi-brand cloud kitchen)', value: 'TURNOVER_12L_TO_20CR' },
+        { label: 'Above ₹20 Crore / Multi-state chain', value: 'TURNOVER_ABOVE_20CR' }
+      ],
+      isRequired: true,
+      sortOrder: 2
+    },
+    {
+      code: 'REST_SERVES_ALCOHOL',
+      questionText: 'Will the establishment serve beer, wine, or alcoholic beverages?',
+      helpText: 'Requires State Excise Department Bar License (FL-III).',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 3
+    },
+    {
+      code: 'REST_GAS_MANIFOLD',
+      questionText: 'Will the kitchen use commercial LPG cylinder manifold or Piped Natural Gas (PNG)?',
+      helpText: 'Mandates Fire Brigade Gas Pipeline Safety NOC & flame arrestor manifold check.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 4
+    }
+  ],
+
+  DAIRY_PROCESSING: [
+    {
+      code: 'DAIRY_MILK_CAPACITY_LPD',
+      questionText: 'Daily milk procurement and processing throughput (Litres per day)?',
+      helpText: '> 50,000 Litres/day mandates Central FSSAI License; below 50,000 LPD requires State FSSAI License.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Up to 5,000 LPD (Micro Chilling & Value Addition)', value: 'UNDER_5000L' },
+        { label: '5,000 to 50,000 LPD (Medium Commercial Dairy)', value: '5000_TO_50000L' },
+        { label: 'Above 50,000 LPD (Large Scale Industrial Dairy)', value: 'ABOVE_50000L' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'DAIRY_PRODUCT_TYPES',
+      questionText: 'What dairy product lines will be manufactured?',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Pasteurized Liquid Pouch Milk only', value: 'LIQUID_MILK' },
+        { label: 'Milk + Paneer, Curd, Ghee, Shrikhand, Butter', value: 'PANEER_CURD_GHEE' },
+        { label: 'Ice Cream, Cheese & Spray-Dried Skimmed Milk Powder (SMP)', value: 'CHEESE_ICE_CREAM_POWDER' }
+      ],
+      isRequired: true,
+      sortOrder: 2
+    },
+    {
+      code: 'DAIRY_CHILLING_FACILITY',
+      questionText: 'Does the plant feature Bulk Milk Coolers (BMC) and continuous cold chain storage?',
+      helpText: 'Qualifies for National Dairy Plan & PMKSY value addition subsidy.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 3
+    }
+  ],
+
+  COLD_STORAGE_AGRO: [
+    {
+      code: 'COLD_CHAMBER_CAPACITY_MT',
+      questionText: 'Total cold storage holding capacity (in Metric Tons)?',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Up to 1,000 MT (Small farm-gate cold room)', value: 'UNDER_1000MT' },
+        { label: '1,000 to 5,000 MT (Commercial multi-commodity hub)', value: '1000_TO_5000MT' },
+        { label: 'Above 5,000 MT (Mega Agro Logistics Terminal)', value: 'ABOVE_5000MT' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'COLD_REFRIGERANT_TYPE',
+      questionText: 'What refrigeration system technology will be utilized?',
+      helpText: 'Ammonia (NH3) systems require specialized DISH pressure vessel inspection and scrubber safety.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Eco-friendly Freon / HFC Gas systems', value: 'FREON_ECO_GAS' },
+        { label: 'Industrial Ammonia (NH3) Two-Stage Compressor plant', value: 'AMMONIA_NH3' }
+      ],
+      isRequired: true,
+      sortOrder: 2
+    },
+    {
+      code: 'COLD_SEEKING_MOFPI',
+      questionText: 'Will you apply for MoFPI Integrated Cold Chain Scheme (up to ₹10 Crore capital grant)?',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 3
+    }
+  ],
+
+  BAKERY_CONFECTIONERY: [
+    {
+      code: 'BAKERY_OVEN_TYPE',
+      questionText: 'Primary industrial baking oven configuration?',
+      inputType: 'SELECT',
+      options: [
+        { label: 'All-Electric Rotary Deck Oven (Clean energy)', value: 'ELECTRIC' },
+        { label: 'LPG / PNG Gas Tunnel Oven', value: 'GAS_LPG' },
+        { label: 'Diesel / Briquette Fired Heavy Oven', value: 'DIESEL_ROTARY' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'BAKERY_PACKAGED_MRP',
+      questionText: 'Will items be packaged in sealed branded retail packs with MRP & Nutritional tables?',
+      helpText: 'Mandates Legal Metrology Packaged Commodities (LMPC) certification.',
+      inputType: 'BOOLEAN',
+      isRequired: true,
+      sortOrder: 2
+    }
+  ],
+
+  BEVERAGE_WATER_UNIT: [
+    {
+      code: 'BEV_RAW_WATER_SOURCE',
+      questionText: 'Primary source of raw source water for bottling?',
+      helpText: 'Packaged drinking water plants using borewell require mandatory CGWA NOC.',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Groundwater / Private Borewell (Mandatory CGWA clearance)', value: 'BOREWELL_GROUNDWATER' },
+        { label: 'MIDC / Industrial Canal Bulk Supply', value: 'MIDC_WATER_GRID' }
+      ],
+      isRequired: true,
+      sortOrder: 1
+    },
+    {
+      code: 'BEV_PACKAGING_TYPE',
+      questionText: 'Target packaging format for commercial sales?',
+      inputType: 'SELECT',
+      options: [
+        { label: 'Single-use PET Bottles (250ml to 1L) with in-house blow molding', value: 'PET_BOTTLES_BLOW_MOLDING' },
+        { label: '20 Litre Bulk Refillable Dispensers for offices/homes', value: '20L_BULK_JARS' },
+        { label: 'Aluminum Cans & Tetra Pak (Juices / Ready-to-Drink)', value: 'ALUMINUM_CANS' }
+      ],
+      isRequired: true,
+      sortOrder: 2
+    }
+  ],
+
   PETROL_PUMP: [
     {
       code: 'PETROL_LOI_STATUS',
@@ -544,9 +790,305 @@ export function discoverBusinessRequirements(
   const sectorReqs: DiscoveredRequirement[] = [];
 
   // ==========================================
-  // 1. PETROL PUMP SPECIFIC REQUIREMENTS
+  // 1. ACTIVE FOCUS: FOOD & AGRO PROCESSING ECOSYSTEM
   // ==========================================
-  if (bType.code === 'PETROL_PUMP') {
+  if (
+    bType.categoryCode === 'FOOD_PROCESSING' ||
+    bType.code.startsWith('FOOD_') ||
+    bType.code === 'RESTAURANT_CLOUD_KITCHEN' ||
+    bType.code === 'DAIRY_PROCESSING' ||
+    bType.code === 'COLD_STORAGE_AGRO' ||
+    bType.code === 'BAKERY_CONFECTIONERY' ||
+    bType.code === 'BEVERAGE_WATER_UNIT'
+  ) {
+    const isCentral =
+      answers.FOOD_ANNUAL_TURNOVER_TIER === 'TURNOVER_ABOVE_20CR' ||
+      answers.FOOD_DAILY_CAPACITY_MT === 'CAPACITY_ABOVE_2MT' ||
+      answers.DAIRY_MILK_CAPACITY_LPD === 'ABOVE_50000L' ||
+      bType.code === 'BEVERAGE_WATER_UNIT' ||
+      investmentCr > 20;
+
+    const isBasic =
+      answers.FOOD_ANNUAL_TURNOVER_TIER === 'TURNOVER_UNDER_12L' ||
+      answers.REST_TURNOVER_TIER === 'TURNOVER_UNDER_12L';
+
+    // A. CENTRAL / STATE: FSSAI Licensing
+    if (isCentral) {
+      centralReqs.push({
+        id: 'REQ_FSSAI_CENTRAL',
+        code: 'FSSAI_CENTRAL_LICENSE',
+        name: 'FSSAI Central Manufacturing License (FOSCOS Form B)',
+        jurisdiction: 'CENTRAL',
+        department: 'Food Safety and Standards Authority of India (FSSAI)',
+        authority: 'Ministry of Health and Family Welfare, Govt of India',
+        category: 'FOOD_SAFETY',
+        applicabilityReason: 'Mandatory Central License under Section 31 of FSS Act 2006 for high-capacity food processing (>2 MT/day), packaged drinking water, or turnover > ₹20 Crore. (Statutory Fee: ₹7,500/year).',
+        priority: 'CRITICAL',
+        statutorySLA: 30,
+        isInspectionRequired: true,
+        isRenewalRequired: true,
+        renewalFrequencyMonths: 60,
+        legalAct: 'Food Safety and Standards (Licensing and Registration of Food Businesses) Regulations 2011',
+        requiredDocuments: [
+          { name: 'Floor Layout Plan (Schedule 4 Unidirectional Flow)', category: 'TECHNICAL_DRAWING', isMandatory: true, description: 'CAD plan separating raw material bay from finished product packaging' },
+          { name: 'Potable Water Test Report (IS 10500 - NABL Lab)', category: 'TEST_REPORT', isMandatory: true, description: 'Microbiological and chemical analysis from NABL accredited lab' },
+          { name: 'Machinery & Equipment List with HP and Capacity', category: 'EQUIPMENT_INVOICE', isMandatory: true, description: 'Itemized processing capacity specification' },
+          { name: 'Food Safety Management System (FSMS) Plan', category: 'SAFETY_PLAN', isMandatory: true, description: 'Hazard Analysis Critical Control Point (HACCP) SOPs' },
+          { name: 'Food Handlers Medical Fitness Certificates (Form IX)', category: 'MEDICAL_CERTIFICATE', isMandatory: true, description: 'Typhoid vaccination and medical fitness records' },
+          { name: 'Nomination of Technical In-Charge / Supervisor (Form IX)', category: 'PROFESSIONAL_CREDENTIALS', isMandatory: true, description: 'Board resolution appointing authorized food safety officer' }
+        ],
+        officialSource: 'https://foscos.fssai.gov.in',
+        lastVerified: '2026-03-01'
+      });
+    } else if (isBasic) {
+      centralReqs.push({
+        id: 'REQ_FSSAI_BASIC',
+        code: 'FSSAI_BASIC_REG',
+        name: 'FSSAI Basic Food Business Registration (Form A)',
+        jurisdiction: 'CENTRAL',
+        department: 'Food Safety and Standards Authority of India (FSSAI)',
+        authority: 'Food & Drug Administration (FDA) Local Designated Officer',
+        category: 'FOOD_SAFETY',
+        applicabilityReason: 'Statutory registration for petty food manufacturers with annual turnover up to ₹12 Lakhs (Statutory fee: ₹100/year).',
+        priority: 'CRITICAL',
+        statutorySLA: 7,
+        isInspectionRequired: false,
+        isRenewalRequired: true,
+        renewalFrequencyMonths: 12,
+        legalAct: 'FSS Act 2006, Section 31(1)',
+        requiredDocuments: [
+          { name: 'Passport Size Photo of Proprietor', category: 'IDENTITY_PROOF', isMandatory: true, description: 'Applicant photograph' },
+          { name: 'Government Photo ID (Aadhaar / Voter ID)', category: 'IDENTITY_PROOF', isMandatory: true, description: 'Proof of identity' },
+          { name: 'Proof of Business Premises Possession', category: 'LEASE_AGREEMENT', isMandatory: true, description: 'Electricity bill / rent agreement' }
+        ],
+        officialSource: 'https://foscos.fssai.gov.in',
+        lastVerified: '2026-02-20'
+      });
+    } else {
+      stateReqs.push({
+        id: 'REQ_FSSAI_STATE',
+        code: 'FSSAI_STATE_LICENSE',
+        name: 'FSSAI State Food Manufacturing License (FOSCOS Form B)',
+        jurisdiction: 'STATE',
+        department: 'Food and Drug Administration (FDA)',
+        authority: 'Commissioner of Food Safety, Govt of ' + location.state,
+        category: 'FOOD_SAFETY',
+        applicabilityReason: 'Mandatory State Food License under Section 31 of FSS Act 2006 for food processing units with turnover between ₹12 Lakhs and ₹20 Crore (Statutory fee: ₹2,000 - ₹5,000/year).',
+        priority: 'CRITICAL',
+        statutorySLA: 30,
+        isInspectionRequired: true,
+        isRenewalRequired: true,
+        renewalFrequencyMonths: 60,
+        legalAct: 'FSS (Licensing and Registration) Regulations 2011',
+        requiredDocuments: [
+          { name: 'Floor Layout Plan (Schedule 4 Compliant)', category: 'TECHNICAL_DRAWING', isMandatory: true, description: 'Demarcating raw materials, preparation, packaging, and fly-catchers' },
+          { name: 'Water Potability Testing Certificate (IS 10500)', category: 'TEST_REPORT', isMandatory: true, description: 'Report from NABL accredited lab confirming zero coliform/pathogens' },
+          { name: 'Itemized Machinery and Equipment Schedule', category: 'EQUIPMENT_INVOICE', isMandatory: true, description: 'Listing motors, conveyors, blenders, and packaging machines' },
+          { name: 'Medical Fitness Certificates for Food Workers (Form IX)', category: 'MEDICAL_CERTIFICATE', isMandatory: true, description: 'Annual health checkup and Typhoid vaccination certificates' },
+          { name: 'List of Food Product Categories & Recipe Formulation', category: 'PRODUCT_SPECS', isMandatory: true, description: 'Declared Indian Food Code (IFC) categories' }
+        ],
+        officialSource: 'https://foscos.fssai.gov.in',
+        lastVerified: '2026-03-01'
+      });
+    }
+
+    // B. STATE: Pollution Control Board Consent (MPCB CTE/CTO - Food Category)
+    stateReqs.push({
+      id: 'REQ_MPCB_FOOD',
+      code: 'MPCB_CTE_FOOD',
+      name: 'State Pollution Control Board Consent to Establish (CTE - Food & Agro)',
+      jurisdiction: 'STATE',
+      department: 'State Pollution Control Board (SPCB / MPCB)',
+      authority: 'Environment Department, Govt of ' + location.state,
+      category: 'ENVIRONMENT',
+      applicabilityReason: 'Mandatory environmental clearance under Section 25 of Water Act 1974 for wash-water discharge, organic biological oxygen demand (BOD) load, and solid waste handling.',
+      priority: 'CRITICAL',
+      statutorySLA: 21,
+      isInspectionRequired: true,
+      isRenewalRequired: true,
+      renewalFrequencyMonths: 60,
+      legalAct: 'Water Act 1974 & Air Act 1981',
+      requiredDocuments: [
+        { name: 'Effluent Treatment Plant (ETP) / Soak Pit Design Blueprint', category: 'ENVIRONMENTAL_PLAN', isMandatory: true, description: 'Engineering flow diagram for neutralization and BOD reduction' },
+        { name: 'Manufacturing Process Flowchart & Water Balance Diagram', category: 'TECHNICAL_DRAWING', isMandatory: true, description: 'Input-output mass balance and water recovery ratio' }
+      ],
+      officialSource: 'State Pollution Control Single Window',
+      lastVerified: '2026-02-28'
+    });
+
+    // C. STATE: Industrial Fire Safety Clearance
+    stateReqs.push({
+      id: 'REQ_FIRE_FOOD',
+      code: 'FIRE_NOC_FOOD',
+      name: 'Fire Prevention & Life Safety Provisional NOC',
+      jurisdiction: 'STATE',
+      department: 'Directorate of Fire & Emergency Services',
+      authority: 'Home Department, Govt of ' + location.state,
+      category: 'FIRE_SAFETY',
+      applicabilityReason: 'Mandatory fire protection audit for processing halls, gas piping manifolds, boiler burner units, and packaging material storage.',
+      priority: 'HIGH',
+      statutorySLA: 15,
+      isInspectionRequired: true,
+      isRenewalRequired: true,
+      renewalFrequencyMonths: 12,
+      legalAct: 'Fire Prevention and Life Safety Measures Act',
+      requiredDocuments: [
+        { name: 'Fire Fighting System Layout & Evacuation Route Plan', category: 'SAFETY_PLAN', isMandatory: true, description: 'ABC dry powder extinguishers, hydrants, and emergency exits' }
+      ],
+      officialSource: 'State Fire Services Portal',
+      lastVerified: '2026-02-15'
+    });
+
+    // D. LOCAL: Municipal Health Trade License / Local Body NOC
+    localReqs.push({
+      id: 'REQ_LOCAL_HEALTH_TRADE',
+      code: 'MUNICIPAL_HEALTH_TRADE_FOOD',
+      name: 'Municipal Health Trade License / Local Body Food NOC',
+      jurisdiction: 'LOCAL',
+      department: 'Public Health Department, Local Municipal Corporation / Gram Panchayat',
+      authority: location.localAuthority || 'Municipal Corporation of ' + location.district,
+      category: 'TRADE_LICENSE',
+      applicabilityReason: 'Local authority commercial permission to conduct food manufacturing and culinary activities within municipal/taluka limits.',
+      priority: 'HIGH',
+      statutorySLA: 14,
+      isInspectionRequired: true,
+      isRenewalRequired: true,
+      renewalFrequencyMonths: 12,
+      legalAct: 'Municipal Corporation Act / State Panchayati Raj Act',
+      requiredDocuments: [
+        { name: 'Sanctioned Building Blueprint & Premises Ownership Proof', category: 'BUILDING_SANCTION', isMandatory: true, description: 'Occupancy certificate or registered lease deed' },
+        { name: 'Property Tax Paid Receipt', category: 'TAX_RECEIPT', isMandatory: true, description: 'Latest municipal assessment receipt' }
+      ],
+      officialSource: 'Municipal Citizen Portal',
+      lastVerified: '2026-02-18'
+    });
+
+    // E. SECTOR: Mandatory NABL Water Potability Analysis (IS 10500)
+    sectorReqs.push({
+      id: 'REQ_NABL_WATER_TEST',
+      code: 'NABL_WATER_TEST_IS10500',
+      name: 'NABL Accredited Potable Water Testing Certificate (IS 10500)',
+      jurisdiction: 'SECTOR_SPECIFIC',
+      department: 'NABL Certified Testing Laboratories / Public Health Laboratory',
+      authority: 'National Accreditation Board for Testing and Calibration Laboratories',
+      category: 'LAB_TEST_REPORT',
+      applicabilityReason: 'Mandatory statutory water test confirming zero pathogenic bacteria (E. coli, Coliform), neutral pH, and safe mineral levels before food preparation.',
+      priority: 'CRITICAL',
+      statutorySLA: 7,
+      isInspectionRequired: false,
+      isRenewalRequired: true,
+      renewalFrequencyMonths: 6,
+      legalAct: 'FSSAI Schedule 4 Quality Standards & IS 10500:2012',
+      requiredDocuments: [
+        { name: 'Water Sample Collection Protocol & Lab Test Report', category: 'TEST_REPORT', isMandatory: true, description: 'Comprehensive 32-parameter physical, chemical and bacteriological analysis' }
+      ],
+      officialSource: 'NABL Public Testing Directory',
+      lastVerified: '2026-03-01'
+    });
+
+    // F. SECTOR: FoSTaC Food Safety Supervisor Deployment
+    sectorReqs.push({
+      id: 'REQ_FOSTAC_SUPERVISOR',
+      code: 'FOSTAC_CERTIFIED_SUPERVISOR',
+      name: 'FoSTaC Food Safety Supervisor Certificate',
+      jurisdiction: 'SECTOR_SPECIFIC',
+      department: 'Food Safety Training & Certification (FoSTaC) Directorate',
+      authority: 'Food Safety and Standards Authority of India (FSSAI)',
+      category: 'WORKFORCE_COMPLIANCE',
+      applicabilityReason: 'Mandatory deployment of at least 1 certified Food Safety Supervisor for every 25 food handling staff under FSSAI regulations.',
+      priority: 'HIGH',
+      statutorySLA: 5,
+      isInspectionRequired: false,
+      isRenewalRequired: true,
+      renewalFrequencyMonths: 24,
+      legalAct: 'FSSAI Order No. 1-135/FSSAI/Imports/2018',
+      requiredDocuments: [
+        { name: 'FoSTaC Course Completion Certificate of Nominated Staff', category: 'PROFESSIONAL_CREDENTIALS', isMandatory: true, description: 'Specialized manufacturing level certificate' }
+      ],
+      officialSource: 'https://fostac.fssai.gov.in',
+      lastVerified: '2026-02-10'
+    });
+
+    // G. Conditional: Groundwater CGWA NOC
+    if (answers.FOOD_WATER_SOURCE === 'BOREWELL' || answers.BEV_RAW_WATER_SOURCE === 'BOREWELL_GROUNDWATER') {
+      centralReqs.push({
+        id: 'REQ_CGWA_GROUNDWATER',
+        code: 'CGWA_GROUNDWATER_NOC',
+        name: 'Central Ground Water Authority (CGWA) Abstraction NOC',
+        jurisdiction: 'CENTRAL',
+        department: 'Central Ground Water Authority (CGWA)',
+        authority: 'Ministry of Jal Shakti, Govt of India',
+        category: 'WATER_RESOURCE',
+        applicabilityReason: 'Mandatory abstraction permit for operating private borewell tubewells for commercial industrial food processing.',
+        priority: 'HIGH',
+        statutorySLA: 45,
+        isInspectionRequired: true,
+        isRenewalRequired: true,
+        renewalFrequencyMonths: 36,
+        legalAct: 'Environment (Protection) Act 1986, Section 5 (CGWA Guidelines)',
+        requiredDocuments: [
+          { name: 'Hydrogeological Impact Report & Water Meter Calibration', category: 'TECHNICAL_REPORT', isMandatory: true, description: 'Rainwater harvesting and recharge recharge plan' }
+        ],
+        officialSource: 'https://cgwa-noc.gov.in',
+        lastVerified: '2026-01-20'
+      });
+    }
+
+    // H. Conditional: Legal Metrology LMPC Packaged Commodities Registration
+    if (answers.FOOD_RETAIL_PACKAGING !== false || answers.BAKERY_PACKAGED_MRP) {
+      sectorReqs.push({
+        id: 'REQ_LMPC_PACKAGING',
+        code: 'LMPC_PACKAGED_COMMODITIES',
+        name: 'Legal Metrology Packaged Commodities (LMPC) Registration',
+        jurisdiction: 'SECTOR_SPECIFIC',
+        department: 'Legal Metrology Organisation (Consumer Affairs)',
+        authority: 'Ministry of Consumer Affairs, Food & Public Distribution',
+        category: 'PACKAGING_STANDARDS',
+        applicabilityReason: 'Mandatory certificate under Rule 27 for packaging and labeling pre-packed food commodities sold with retail MRP.',
+        priority: 'HIGH',
+        statutorySLA: 15,
+        isInspectionRequired: false,
+        isRenewalRequired: false,
+        renewalFrequencyMonths: 0,
+        legalAct: 'Legal Metrology (Packaged Commodities) Rules 2011, Rule 27',
+        requiredDocuments: [
+          { name: 'Specimen Packaging Label Artwork', category: 'PACKAGING_ARTWORK', isMandatory: true, description: 'Displaying Net Weight, MRP, Best Before, Nutritional Info, Veg Logo' }
+        ],
+        officialSource: 'https://e-lmis.gov.in',
+        lastVerified: '2026-02-14'
+      });
+    }
+
+    // I. Conditional: Steam Boiler IBR Sanction
+    if (answers.FOOD_HAS_STEAM_BOILER) {
+      stateReqs.push({
+        id: 'REQ_IBR_BOILER',
+        code: 'IBR_STEAM_BOILER_REG',
+        name: 'Directorate of Steam Boilers Registration & Mounting Approval',
+        jurisdiction: 'STATE',
+        department: 'Directorate of Steam Boilers',
+        authority: 'Industries, Energy and Labour Department, Govt of ' + location.state,
+        category: 'BOILER_SAFETY',
+        applicabilityReason: 'Mandatory inspection and hydraulic pressure testing of industrial steam generation boilers under Indian Boilers Act.',
+        priority: 'CRITICAL',
+        statutorySLA: 21,
+        isInspectionRequired: true,
+        isRenewalRequired: true,
+        renewalFrequencyMonths: 12,
+        legalAct: 'Indian Boilers Act 1923 & Indian Boiler Regulations 1950',
+        requiredDocuments: [
+          { name: 'Boiler Manufacturer Form II, III & IV Certificates', category: 'EQUIPMENT_INVOICE', isMandatory: true, description: 'IBR approved steel plate and welder credentials' }
+        ],
+        officialSource: 'Directorate of Steam Boilers Portal',
+        lastVerified: '2026-02-05'
+      });
+    }
+  }
+
+  // ==========================================
+  // 2. PETROL PUMP SPECIFIC REQUIREMENTS
+  // ==========================================
+  else if (bType.code === 'PETROL_PUMP') {
     // CENTRAL: PESO
     centralReqs.push({
       id: 'REQ_PESO_XIV',
@@ -1143,4 +1685,197 @@ export function discoverBusinessRequirements(
       ],
       officialSource: 'MIDC Single Window',
       lastVerified: '2026-02-20'
-    })
+    });
+  }
+
+  // Combine all requirements
+  const allRequirements: DiscoveredRequirement[] = [
+    ...centralReqs,
+    ...stateReqs,
+    ...localReqs,
+    ...sectorReqs
+  ];
+
+  // Build unique mandatory documents list with usage mapping
+  const docMap = new Map<string, { name: string; category: string; usedForApprovals: string[] }>();
+  allRequirements.forEach(req => {
+    req.requiredDocuments.forEach(d => {
+      if (docMap.has(d.name)) {
+        docMap.get(d.name)!.usedForApprovals.push(req.name);
+      } else {
+        docMap.set(d.name, {
+          name: d.name,
+          category: d.category,
+          usedForApprovals: [req.name]
+        });
+      }
+    });
+  });
+
+  // Calculate Critical Path
+  const sortedBySLA = [...allRequirements].sort((a, b) => b.statutorySLA - a.statutorySLA);
+  const criticalSequence = sortedBySLA.slice(0, 3).map(r => r.name);
+  const totalEstimatedDays = sortedBySLA.length > 0 ? sortedBySLA[0].statutorySLA + (sortedBySLA[1]?.statutorySLA ? Math.round(sortedBySLA[1].statutorySLA * 0.4) : 0) : 30;
+  const sequentialDays = allRequirements.reduce((acc, r) => acc + r.statutorySLA, 0);
+  const parallelSavings = Math.max(0, sequentialDays - totalEstimatedDays);
+
+  // Government Scheme matching based on business category & investment
+  const potentialSchemes: KnowYourApprovalsResult['potentialGovernmentSchemes'] = [];
+
+  const isFoodEnterprise =
+    bType.categoryCode === 'FOOD_PROCESSING' ||
+    bType.code.startsWith('FOOD_') ||
+    bType.code === 'RESTAURANT_CLOUD_KITCHEN' ||
+    bType.code === 'DAIRY_PROCESSING' ||
+    bType.code === 'COLD_STORAGE_AGRO' ||
+    bType.code === 'BAKERY_CONFECTIONERY' ||
+    bType.code === 'BEVERAGE_WATER_UNIT';
+
+  if (isFoodEnterprise) {
+    potentialSchemes.push({
+      name: 'Pradhan Mantri Formalisation of Micro food processing Enterprises (PMFME)',
+      department: 'Ministry of Food Processing Industries (MoFPI) & Maharashtra State Agriculture Dept',
+      benefitSummary: '35% Credit-Linked Capital Subsidy on plant & machinery up to ₹10.0 Lakhs, plus ₹40,000 seed capital for SHG/FPO members and 50% branding support.',
+      matchConfidence: 'High Match (95%)',
+      maxSubsidy: '₹10.0 Lakhs Capital Grant'
+    });
+
+    if (investmentCr >= 2.0) {
+      potentialSchemes.push({
+        name: 'PM Kisan SAMPADA Yojana - Creation / Expansion of Food Processing (CEFPPC)',
+        department: 'Ministry of Food Processing Industries (MoFPI), Govt of India',
+        benefitSummary: '35% to 50% Non-refundable Capital Grant on technical civil works and eligible food processing machinery (up to ₹5.0 Crore).',
+        matchConfidence: 'High Match (90%)',
+        maxSubsidy: '₹5.0 Crore Direct Grant'
+      });
+    }
+
+    if (answers.FOOD_HAS_COLD_STORAGE || bType.code === 'COLD_STORAGE_AGRO' || bType.code === 'DAIRY_PROCESSING') {
+      potentialSchemes.push({
+        name: 'MoFPI Integrated Cold Chain and Value Addition Infrastructure Scheme',
+        department: 'Ministry of Food Processing Industries (MoFPI)',
+        benefitSummary: '35% to 50% Capital Subsidy for multi-temperature cold storages, blast freezers, and refrigerated reefer transport vans.',
+        matchConfidence: 'High Match (92%)',
+        maxSubsidy: '₹10.0 Crore Capital Subsidy'
+      });
+    }
+
+    if (location.state === 'Maharashtra') {
+      potentialSchemes.push({
+        name: 'Maharashtra Package Scheme of Incentives (PSI 2019) - Agro & Food Processing Tier',
+        department: 'Directorate of Industries, Govt of Maharashtra',
+        benefitSummary: 'Up to 60% Gross SGST reimbursement as Industrial Promotion Subsidy for 9 years, 100% Stamp Duty exemption, and ₹1.50/unit industrial power tariff subsidy.',
+        matchConfidence: 'High Match (94%)',
+        maxSubsidy: '₹15.0 Crore over 9 Years'
+      });
+    }
+
+    potentialSchemes.push({
+      name: 'NABARD Agriculture Infrastructure Fund (AIF) - Post-Harvest Management',
+      department: 'NABARD & Department of Agriculture, Govt of India',
+      benefitSummary: '3% per annum Interest Subvention on term loans up to ₹2.0 Crore for post-harvest food sorting, grading, and packaging infrastructure.',
+      matchConfidence: 'Likely Match (88%)',
+      maxSubsidy: '3% Interest Subvention (₹2.0 Cr Loan)'
+    });
+  } else {
+    // Non-food fallback schemes
+    if (investmentCr >= 1 && location.state === 'Maharashtra') {
+      potentialSchemes.push({
+        name: 'Maharashtra Package Scheme of Incentives (PSI) 2019',
+        department: 'Directorate of Industries, Maharashtra',
+        benefitSummary: 'Up to 30% Capital Investment Subsidy + 100% Stamp Duty Exemption on Land Lease.',
+        matchConfidence: 'High Match (92%)',
+        maxSubsidy: '₹10.0 Crore'
+      });
+    }
+    if (investmentCr <= 5) {
+      potentialSchemes.push({
+        name: 'Credit Linked Capital Subsidy Scheme (CLCSS) for MSMEs',
+        department: 'Ministry of MSME, Govt of India',
+        benefitSummary: '15% upfront capital subsidy for technology upgradation in micro/small enterprises.',
+        matchConfidence: 'High Match (90%)',
+        maxSubsidy: '₹15.0 Lakhs'
+      });
+    }
+  }
+
+  // Generate actionable, easy-to-understand Smart Recommendations
+  const smartRecommendations: KnowYourApprovalsResult['smartRecommendations'] = [];
+
+  if (isFoodEnterprise) {
+    const fssaiTier =
+      answers.FOOD_ANNUAL_TURNOVER_TIER === 'TURNOVER_ABOVE_20CR' || investmentCr > 20
+        ? 'Central License (₹7,500/yr)'
+        : answers.FOOD_ANNUAL_TURNOVER_TIER === 'TURNOVER_UNDER_12L'
+        ? 'Basic Registration (₹100/yr)'
+        : 'State License (₹2,000 - ₹5,000/yr)';
+
+    smartRecommendations.push({
+      category: 'LICENSING',
+      title: 'FSSAI License Category Selection',
+      description: `Based on your declared project outlay of ₹${investmentCr} Cr and operations, your enterprise qualifies for an FSSAI ${fssaiTier}. Processed online via FOSCOS within 30 statutory working days.`,
+      priority: 'HIGH',
+      actionableStep: 'Upload Schedule 4 floor layout plan and itemized machinery list in your Document Vault.'
+    });
+
+    smartRecommendations.push({
+      category: 'WATER_QUALITY',
+      title: 'Mandatory NABL Water Quality Certificate (IS 10500:2012)',
+      description: 'Water is legally classified as an active food ingredient. FSSAI officers mandate a complete physical, chemical, and microbiological test report (testing for E. coli, Coliform, pH, and heavy metals) from a NABL-accredited laboratory.',
+      priority: 'HIGH',
+      actionableStep: 'Collect 2-litre water sample from your premises and test under IS 10500 standards.'
+    });
+
+    smartRecommendations.push({
+      category: 'LAYOUT_DESIGN',
+      title: 'FSSAI Schedule 4 Unidirectional Floor Plan Layout',
+      description: 'The physical facility must have strict unidirectional flow: raw material bay must NOT cross paths with final packaging or dispatch. Demarcate insect fly-catchers, washable epoxy flooring, and foot-operated hand-wash sinks.',
+      priority: 'HIGH',
+      actionableStep: 'Verify your CAD floor plan shows separate Raw Material, Preparation, Packaging, and Storage zones.'
+    });
+
+    smartRecommendations.push({
+      category: 'WORKER_HYGIENE',
+      title: 'Food Handler Medical Fitness (Form IX) & FoSTaC Supervisor',
+      description: `Every food handling worker (${employeeCount} planned personnel) must possess an annual medical fitness certificate (Form IX) with Typhoid vaccination. Deploy at least 1 certified FoSTaC Food Safety Supervisor.`,
+      priority: 'MEDIUM',
+      actionableStep: 'Schedule staff health checkups and enroll nominated manager on the FoSTaC portal.'
+    });
+
+    smartRecommendations.push({
+      category: 'GOVERNMENT_SCHEME',
+      title: 'Government Capital Subsidies: PMFME (35% up to ₹10L) & PMKSY (up to ₹5 Cr)',
+      description: `Your enterprise has an automatic 95% match for the PMFME scheme (35% capital subsidy up to ₹10 Lakhs). For larger investments, apply under PMKSY CEFPPC for up to ₹5.0 Crore direct non-refundable machinery grant.`,
+      priority: 'RECOMMENDED',
+      actionableStep: 'Prepare Bank Appraisal and Detailed Project Report (DPR) to claim the capital subsidy.'
+    });
+  } else {
+    smartRecommendations.push({
+      category: 'LICENSING',
+      title: 'Statutory Single Window Roadmap',
+      description: `Your enterprise requires ${allRequirements.length} primary clearances. Concurrent parallel filing saves an estimated ${parallelSavings} statutory working days.`,
+      priority: 'HIGH',
+      actionableStep: 'Upload your verified identity, land possession, and financial documents to begin.'
+    });
+  }
+
+  return {
+    businessType: bType,
+    location,
+    projectStage,
+    totalRequirementsCount: allRequirements.length,
+    requirementsByJurisdiction: {
+      central: centralReqs,
+      state: stateReqs,
+      local: localReqs,
+      sectorSpecific: sectorReqs
+    },
+    allRequirements,
+    mandatoryDocumentsList: Array.from(docMap.values()),
+    estimatedTotalWorkingDays: totalEstimatedDays,
+    parallelProcessingSavesDays: parallelSavings,
+    criticalPathSequence: criticalSequence,
+    potentialGovernmentSchemes: potentialSchemes,
+    smartRecommendations
+  };
+}

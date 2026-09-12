@@ -153,18 +153,34 @@ export const KnowYourApprovalsPage: React.FC = () => {
               <div className="space-y-1 max-h-[600px] overflow-y-auto text-xs">
                 {filteredTypes.map(t => {
                   const isSelected = selectedType?.code === t.code;
+                  const isLive = t.isActive !== false;
                   return (
                     <button
                       key={t.code}
                       onClick={() => handleSelectType(t)}
-                      className={`w-full text-left px-3 py-2 rounded flex items-center space-x-2.5 transition ${
+                      className={`w-full text-left px-2.5 py-2 rounded flex items-center justify-between transition text-xs ${
                         isSelected
                           ? 'bg-blue-700 text-white font-bold shadow-2xs'
                           : 'hover:bg-slate-100 text-slate-700 font-medium'
                       }`}
                     >
-                      <div className="shrink-0">{getCategoryIcon(t.icon)}</div>
-                      <span className="truncate">{t.name}</span>
+                      <div className="flex items-center space-x-2 truncate">
+                        <div className="shrink-0">{getCategoryIcon(t.icon)}</div>
+                        <span className="truncate">{t.name}</span>
+                      </div>
+                      {isLive ? (
+                        <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${
+                          isSelected ? 'bg-emerald-400 text-slate-950' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          LIVE
+                        </span>
+                      ) : (
+                        <span className={`text-[9px] px-1 py-0.2 rounded shrink-0 ${
+                          isSelected ? 'bg-blue-800 text-blue-200' : 'bg-slate-200 text-slate-500'
+                        }`}>
+                          Phase 2
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -206,6 +222,23 @@ export const KnowYourApprovalsPage: React.FC = () => {
                   </Link>
                 </div>
 
+                {selectedType.isActive === false && (
+                  <div className="mb-6 p-3.5 bg-amber-50 border border-amber-200 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-900 shadow-2xs">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>
+                        <strong>Phase 2 Module Preview:</strong> This statutory roadmap is provided for reference. To experience our fully functional, zero-error single-window license engine with automated forms, NABL tests &amp; subsidy claims, explore <strong>Food Processing &amp; Agro</strong> ventures.
+                      </span>
+                    </div>
+                    <Link
+                      to="/start-business?type=FOOD_PROCESSING"
+                      className="px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold text-[11px] shrink-0 transition text-center"
+                    >
+                      Try Food Engine &rarr;
+                    </Link>
+                  </div>
+                )}
+
                 {loadingDiscovery ? (
                   <div className="p-12 text-center text-xs text-slate-500">
                     Loading statutory clearance roadmap...
@@ -239,6 +272,39 @@ export const KnowYourApprovalsPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Smart Recommendations */}
+                    {discoveryResult.smartRecommendations && discoveryResult.smartRecommendations.length > 0 && (
+                      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white rounded-lg p-5 border border-blue-800 shadow-sm">
+                        <div className="flex items-center justify-between border-b border-blue-800/60 pb-3 mb-4">
+                          <div className="flex items-center space-x-2">
+                            <Sparkles className="w-4 h-4 text-amber-400" />
+                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                              Smart Expert Recommendations &amp; Guidance
+                            </h3>
+                          </div>
+                          <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
+                            Deterministic Rules Verified
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          {discoveryResult.smartRecommendations.map((rec: any, idx: number) => (
+                            <div key={idx} className="bg-white/10 p-3 rounded-lg border border-white/10 flex flex-col justify-between">
+                              <div>
+                                <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-blue-500/30 text-blue-200 border border-blue-400/30">
+                                  {rec.category}
+                                </span>
+                                <h4 className="font-bold text-xs text-white mt-1.5">{rec.title}</h4>
+                                <p className="text-[11px] text-slate-200 mt-1 leading-relaxed">{rec.advice}</p>
+                              </div>
+                              <div className="mt-2.5 pt-2 border-t border-white/10 text-[10px] text-amber-200 font-semibold">
+                                {rec.actionItem}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* All Clearances List */}
                     <div className="space-y-4 text-xs">

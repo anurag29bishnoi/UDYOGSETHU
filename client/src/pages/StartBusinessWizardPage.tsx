@@ -31,7 +31,9 @@ import {
   Users,
   FileText,
   Download,
-  AlertCircle
+  AlertCircle,
+  Info,
+  X
 } from 'lucide-react';
 
 interface BusinessTypeItem {
@@ -44,6 +46,9 @@ interface BusinessTypeItem {
   typicalInvestmentRange: string;
   governingActs: string;
   keywords: string[];
+  isActive?: boolean;
+  badgeText?: string;
+  tagline?: string;
 }
 
 interface DynamicQuestion {
@@ -72,6 +77,10 @@ export const StartBusinessWizardPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedType, setSelectedType] = useState<BusinessTypeItem | null>(null);
+
+  // Modal State for Coming Soon (Phase 2)
+  const [showComingSoonModal, setShowComingSoonModal] = useState<boolean>(false);
+  const [comingSoonTargetName, setComingSoonTargetName] = useState<string>('');
 
   // Form States
   const [projectName, setProjectName] = useState<string>('');
@@ -308,7 +317,7 @@ export const StartBusinessWizardPage: React.FC = () => {
               <div className="max-w-2xl mx-auto text-center mb-6">
                 <h2 className="text-lg font-bold text-slate-900">What business do you want to start?</h2>
                 <p className="text-xs text-slate-500 mt-1">
-                  Search across 40+ structured industrial, retail, service, and healthcare sectors.
+                  Select your commercial activity to compile required approvals, documents, and government subsidies.
                 </p>
 
                 {/* Instant Search Bar */}
@@ -318,23 +327,21 @@ export const StartBusinessWizardPage: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search: Petrol Pump, Hotel, Hospital, Textile Factory, Pharmacy, IT Company, Cold Storage..."
+                    placeholder="Search: Food Processing, Restaurant, Cloud Kitchen, Dairy, Cold Storage, Bakery, Water Bottling..."
                     className="w-full pl-10 pr-4 py-2 text-xs rounded border border-slate-300 focus:outline-hidden focus:ring-1 focus:ring-blue-600 focus:border-blue-600 bg-white"
                   />
                 </div>
 
-                {/* Popular Quick-Select Chips */}
+                {/* Quick-Select Chips (Focused on Food Ventures) */}
                 <div className="flex flex-wrap items-center justify-center gap-1.5 mt-3 text-[11px]">
-                  <span className="text-slate-400 font-medium">Quick Suggestions:</span>
+                  <span className="text-slate-400 font-medium">Quick Food Categories:</span>
                   {[
-                    { label: 'Petrol Pump', code: 'PETROL_PUMP' },
-                    { label: 'Hotel & Resort', code: 'HOTEL' },
-                    { label: 'Hospital', code: 'HOSPITAL' },
-                    { label: 'Textile Factory', code: 'TEXTILE_FACTORY' },
-                    { label: 'Food Processing', code: 'FOOD_PROCESSING' },
-                    { label: 'IT / Software', code: 'IT_COMPANY' },
-                    { label: 'Pharmacy', code: 'PHARMACY' },
-                    { label: 'Auto Components', code: 'AUTO_COMPONENTS' }
+                    { label: 'Food Processing Factory', code: 'FOOD_PROCESSING' },
+                    { label: 'Restaurant & Cloud Kitchen', code: 'RESTAURANT_CLOUD_KITCHEN' },
+                    { label: 'Dairy & Milk Processing', code: 'DAIRY_PROCESSING' },
+                    { label: 'Agro Cold Storage', code: 'COLD_STORAGE_AGRO' },
+                    { label: 'Bakery & Snacks Unit', code: 'BAKERY_CONFECTIONERY' },
+                    { label: 'Packaged Drinking Water', code: 'BEVERAGE_WATER_UNIT' }
                   ].map(chip => (
                     <button
                       key={chip.code}
@@ -345,12 +352,40 @@ export const StartBusinessWizardPage: React.FC = () => {
                           setStep(2);
                         }
                       }}
-                      className="bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 px-2 py-0.5 rounded border border-slate-200 transition"
+                      className="bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-semibold px-2.5 py-1 rounded border border-emerald-200 transition flex items-center space-x-1"
                     >
-                      {chip.label}
+                      <span>{chip.label}</span>
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Live Focus Ecosystem Banner */}
+              <div className="p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs mb-6 shadow-2xs">
+                <div className="flex items-center space-x-2.5">
+                  <span className="flex h-3 w-3 relative shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                  <div>
+                    <strong className="text-emerald-950 font-bold text-xs">PRIMARY ACTIVE DEMO: Food &amp; Agro-Processing Ecosystem</strong>
+                    <p className="text-[11px] text-emerald-800 mt-0.5">
+                      End-to-end statutory licensing (FSSAI State/Central), NABL IS 10500 water testing, Schedule 4 layouts, and PMFME/PMKSY subsidies are fully active. Non-food sectors display 'Coming Soon' for Phase 2.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const match = businessTypes.find(b => b.code === 'FOOD_PROCESSING');
+                    if (match) {
+                      handleSelectBusinessType(match);
+                      setStep(2);
+                    }
+                  }}
+                  className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold text-xs shrink-0 shadow-2xs transition"
+                >
+                  Start Food Factory &rarr;
+                </button>
               </div>
 
               {/* Category Filter Pills */}
@@ -363,7 +398,7 @@ export const StartBusinessWizardPage: React.FC = () => {
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  All Categories ({businessTypes.length})
+                  All Activities ({businessTypes.length})
                 </button>
                 {categories.map(cat => (
                   <button
@@ -384,38 +419,64 @@ export const StartBusinessWizardPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredBusinessTypes.map(bType => {
                   const isSelected = selectedType?.code === bType.code;
+                  const isComingSoon = bType.isActive === false;
+
                   return (
                     <div
                       key={bType.code}
-                      onClick={() => handleSelectBusinessType(bType)}
-                      className={`p-4 rounded border cursor-pointer transition flex flex-col justify-between ${
+                      onClick={() => {
+                        if (isComingSoon) {
+                          setComingSoonTargetName(bType.name);
+                          setShowComingSoonModal(true);
+                        } else {
+                          handleSelectBusinessType(bType);
+                        }
+                      }}
+                      className={`p-4 rounded-lg border transition flex flex-col justify-between cursor-pointer ${
                         isSelected
                           ? 'bg-blue-50 border-blue-600 ring-2 ring-blue-600 shadow-sm'
-                          : 'bg-white border-slate-200 hover:border-blue-400 hover:shadow-xs'
+                          : isComingSoon
+                          ? 'bg-slate-50/70 border-slate-200 hover:border-slate-300 opacity-85 hover:opacity-100'
+                          : 'bg-white border-emerald-200 hover:border-emerald-400 hover:shadow-xs hover:bg-emerald-50/20'
                       }`}
                     >
                       <div>
                         <div className="flex items-start justify-between mb-2">
-                          <div className="w-9 h-9 rounded bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
+                          <div className={`w-9 h-9 rounded flex items-center justify-center shrink-0 border ${
+                            !isComingSoon ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-100 border-slate-200'
+                          }`}>
                             {getCategoryIcon(bType.icon)}
                           </div>
-                          {bType.isHazardous && (
-                            <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                              PESO / SPCB Controlled
-                            </span>
-                          )}
+                          <div>
+                            {!isComingSoon ? (
+                              <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded shadow-2xs">
+                                ✨ LIVE ENGINE - FULL ACCESS
+                              </span>
+                            ) : (
+                              <span className="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-300">
+                                COMING SOON (Phase 2)
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <h3 className="text-sm font-bold text-slate-900">{bType.name}</h3>
                         <p className="text-xs text-slate-600 mt-1 leading-relaxed line-clamp-2">
                           {bType.description}
                         </p>
+                        {bType.tagline && (
+                          <p className="text-[10px] text-emerald-800 font-semibold mt-1.5 bg-emerald-50/80 px-2 py-0.5 rounded border border-emerald-100">
+                            {bType.tagline}
+                          </p>
+                        )}
                       </div>
 
                       <div className="mt-4 pt-3 border-t border-slate-100 text-[11px] flex justify-between items-center text-slate-500">
                         <span>Invest: <strong className="text-slate-700">{bType.typicalInvestmentRange}</strong></span>
-                        <span className="text-blue-700 font-bold flex items-center">
-                          Select &rarr;
+                        <span className={`font-bold flex items-center ${
+                          !isComingSoon ? 'text-emerald-700' : 'text-slate-400'
+                        }`}>
+                          {!isComingSoon ? 'Select &rarr;' : 'Phase 2'}
                         </span>
                       </div>
                     </div>
@@ -709,6 +770,76 @@ export const StartBusinessWizardPage: React.FC = () => {
                 </span>
               </div>
 
+              {/* Food Industry Regulatory & Subsidy Architecture Quick Guide */}
+              {(selectedType.categoryCode === 'FOOD_AGRO' ||
+                selectedType.code.includes('FOOD') ||
+                selectedType.code.includes('RESTAURANT') ||
+                selectedType.code.includes('DAIRY') ||
+                selectedType.code.includes('COLD') ||
+                selectedType.code.includes('BAKERY') ||
+                selectedType.code.includes('BEVERAGE')) && (
+                <div className="mb-6 p-4 rounded-lg bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-300 shadow-2xs">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center space-x-2">
+                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                      <span className="text-xs font-bold text-emerald-950 uppercase tracking-wide">
+                        Food &amp; Agro Industry Regulatory Architecture (FSSAI / SPCB / MoFPI)
+                      </span>
+                    </div>
+                    <span className="bg-emerald-600 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase">
+                      Live Regulatory Rules
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div className="bg-white/90 p-3 rounded border border-emerald-200 shadow-2xs">
+                      <div className="font-bold text-slate-900 text-xs mb-1 text-emerald-950 flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                        1. FSSAI Licensing Hierarchy
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Automatic determination based on capacity:
+                      </p>
+                      <ul className="text-[10px] text-slate-700 list-disc list-inside mt-1 space-y-0.5">
+                        <li><strong>Basic Registration:</strong> Under ₹12L turnover</li>
+                        <li><strong>State License:</strong> ₹12L to ₹20 Cr annual turnover</li>
+                        <li><strong>Central License:</strong> &gt; ₹20 Cr, 100% EOU or &gt;2 MT/day</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-white/90 p-3 rounded border border-teal-200 shadow-2xs">
+                      <div className="font-bold text-slate-900 text-xs mb-1 text-teal-950 flex items-center gap-1.5">
+                        <FileCheck2 className="w-3.5 h-3.5 text-teal-700" />
+                        2. Mandatory Pre-Requisite Dossiers
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Required before filing statutory application:
+                      </p>
+                      <ul className="text-[10px] text-slate-700 list-disc list-inside mt-1 space-y-0.5">
+                        <li><strong>NABL Water Analysis:</strong> IS 10500:2012 potability</li>
+                        <li><strong>Schedule 4 Layout:</strong> Zero-cross-contamination path</li>
+                        <li><strong>Medical Fitness:</strong> Form IX for food handlers</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-white/90 p-3 rounded border border-blue-200 shadow-2xs">
+                      <div className="font-bold text-slate-900 text-xs mb-1 text-blue-950 flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-blue-700" />
+                        3. Government Grant Matching
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Capital grants &amp; SGST refunds evaluated:
+                      </p>
+                      <ul className="text-[10px] text-slate-700 list-disc list-inside mt-1 space-y-0.5">
+                        <li><strong>PMFME:</strong> 35% subsidy up to ₹10 Lakhs</li>
+                        <li><strong>PMKSY CEFPPC:</strong> Machinery grant up to ₹5.00 Cr</li>
+                        <li><strong>Maha PSI 2019:</strong> 60% Gross SGST refund (9 yrs)</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-5 text-xs">
                 {dynamicQuestions.map(q => (
                   <div key={q.code} className="p-4 bg-slate-50 border border-slate-200 rounded">
@@ -879,6 +1010,62 @@ export const StartBusinessWizardPage: React.FC = () => {
                 <span className="text-[11px] text-slate-500">vs traditional serial queue</span>
               </div>
             </div>
+
+            {/* Smart Expert Recommendations & Roadmap Advisory */}
+            {discoveryResult.smartRecommendations && discoveryResult.smartRecommendations.length > 0 && (
+              <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white rounded-lg p-5 shadow-sm border border-blue-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-800/60 pb-3 mb-4">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 bg-blue-500/20 rounded-md border border-blue-400/30">
+                      <Sparkles className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                        <span>Intelligent Roadmap &amp; Expert Advisory</span>
+                        <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">
+                          Action-Oriented Guidance
+                        </span>
+                      </h3>
+                      <p className="text-[11px] text-blue-200">
+                        Tailored advice compiled by our deterministic rules engine to avoid rejection, expedite SLA &amp; claim maximum capital subsidy
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    {discoveryResult.smartRecommendations.length} Recommendations Generated
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                  {discoveryResult.smartRecommendations.map((rec: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="bg-white/10 backdrop-blur-xs p-3.5 rounded-lg border border-white/10 hover:border-white/20 transition flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/30 text-blue-200 border border-blue-400/30">
+                            {rec.category}
+                          </span>
+                          <span className="text-[10px] text-amber-300 font-medium flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> {rec.timing}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-xs text-white">{rec.title}</h4>
+                        <p className="text-[11px] text-slate-200 mt-1.5 leading-relaxed">{rec.advice}</p>
+                      </div>
+
+                      <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px]">
+                        <span className="text-amber-200 font-semibold">{rec.actionItem}</span>
+                        <span className="bg-white/20 px-1.5 py-0.5 rounded font-mono text-white/90">
+                          {rec.department}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Requirements Categorized by Jurisdiction */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1056,6 +1243,68 @@ export const StartBusinessWizardPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* COMING SOON (PHASE 2) MODAL */}
+      {showComingSoonModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl border border-slate-200 p-6 overflow-hidden relative">
+            <button
+              onClick={() => setShowComingSoonModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-4">
+              <Clock className="w-6 h-6" />
+            </div>
+
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-amber-100 text-amber-900 rounded border border-amber-200">
+              Module In Development (Phase 2)
+            </span>
+
+            <h3 className="text-lg font-bold text-slate-900 mt-2">
+              {comingSoonTargetName} Clearances
+            </h3>
+
+            <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              To deliver an uncompromising, 100% verified single-window journey with zero errors, our live production prototype currently prioritizes the complete <strong>Food &amp; Agro-Processing Ecosystem</strong>.
+            </p>
+
+            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-950 space-y-1">
+              <div className="font-bold flex items-center gap-1.5 text-emerald-900">
+                <Sparkles className="w-4 h-4 text-emerald-700" />
+                Experience Full Live Engine in Food &amp; Agro:
+              </div>
+              <p className="text-[11px] text-emerald-800 leading-relaxed">
+                Try <strong>Food Processing &amp; Cold Storage</strong>, <strong>Restaurant &amp; Cloud Kitchen</strong>, or <strong>Dairy Processing</strong> to test end-to-end FSSAI State/Central licensing, NABL water certification, and PMFME/PMKSY subsidies.
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={() => {
+                  setShowComingSoonModal(false);
+                  const foodType = businessTypes.find(b => b.code === 'FOOD_PROCESSING');
+                  if (foodType) {
+                    handleSelectBusinessType(foodType);
+                    setStep(2);
+                  }
+                }}
+                className="flex-1 py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs shadow-xs transition text-center"
+              >
+                Switch to Food Processing (Live) &rarr;
+              </button>
+              <button
+                onClick={() => setShowComingSoonModal(false)}
+                className="py-2.5 px-4 bg-white hover:bg-slate-100 text-slate-700 rounded-lg font-semibold text-xs border border-slate-300 transition text-center"
+              >
+                Explore Other
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

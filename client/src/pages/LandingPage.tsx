@@ -159,24 +159,39 @@ export const LandingPage: React.FC = () => {
           {/* Quick Business Activity Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { name: 'Petrol Pump', category: 'Petroleum Retail', icon: <Fuel className="w-5 h-5 text-amber-600" />, code: 'PETROL_PUMP' },
-              { name: 'Hotel & Resort', category: 'Hospitality', icon: <Hotel className="w-5 h-5 text-blue-600" />, code: 'HOTEL' },
-              { name: 'Hospital & Clinic', category: 'Healthcare', icon: <HeartPulse className="w-5 h-5 text-rose-600" />, code: 'HOSPITAL' },
-              { name: 'Textile Factory', category: 'Manufacturing', icon: <Factory className="w-5 h-5 text-slate-700" />, code: 'TEXTILE_FACTORY' },
-              { name: 'Food Processing', category: 'Agro & Cold Chain', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'FOOD_PROCESSING' },
-              { name: 'IT / Software Hub', category: 'Tech & BPM', icon: <Cpu className="w-5 h-5 text-indigo-600" />, code: 'IT_COMPANY' },
-              { name: 'Auto Components', category: 'Engineering', icon: <Car className="w-5 h-5 text-orange-600" />, code: 'AUTO_COMPONENTS' },
-              { name: 'Pharmacy Chemist', category: 'Retail Healthcare', icon: <Building2 className="w-5 h-5 text-teal-600" />, code: 'PHARMACY' },
-              { name: 'Pharma / API Plant', category: 'Formulations', icon: <FlaskConical className="w-5 h-5 text-purple-600" />, code: 'PHARMACEUTICAL' },
-              { name: 'Restaurant & Bar', category: 'Food Service', icon: <Building2 className="w-5 h-5 text-red-600" />, code: 'RESTAURANT' },
-              { name: 'Solar Power Plant', category: 'Renewable Energy', icon: <SunMedium className="w-5 h-5 text-amber-500" />, code: 'SOLAR_PROJECT' },
-              { name: 'EV Fast Charging', category: 'Mobility Hub', icon: <Zap className="w-5 h-5 text-blue-500" />, code: 'EV_CHARGING' }
+              { name: 'Food Processing Factory', category: 'Agro & Packaging', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'FOOD_PROCESSING', isLive: true },
+              { name: 'Restaurant & Cloud Kitchen', category: 'Commercial Dining', icon: <Building2 className="w-5 h-5 text-emerald-600" />, code: 'RESTAURANT_CLOUD_KITCHEN', isLive: true },
+              { name: 'Dairy & Milk Processing', category: 'Dairy Products', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'DAIRY_PROCESSING', isLive: true },
+              { name: 'Agro Cold Storage', category: 'Post-Harvest Logistics', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'COLD_STORAGE_AGRO', isLive: true },
+              { name: 'Bakery & Snacks Unit', category: 'Baked Goods & Namkeen', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'BAKERY_CONFECTIONERY', isLive: true },
+              { name: 'Packaged Drinking Water', category: 'Beverage Bottling', icon: <Apple className="w-5 h-5 text-emerald-600" />, code: 'BEVERAGE_WATER_UNIT', isLive: true },
+              { name: 'Petrol Pump', category: 'Petroleum Retail', icon: <Fuel className="w-5 h-5 text-amber-600" />, code: 'PETROL_PUMP', isLive: false },
+              { name: 'Hotel & Resort', category: 'Hospitality', icon: <Hotel className="w-5 h-5 text-blue-600" />, code: 'HOTEL', isLive: false },
+              { name: 'Hospital & Clinic', category: 'Healthcare', icon: <HeartPulse className="w-5 h-5 text-rose-600" />, code: 'HOSPITAL', isLive: false },
+              { name: 'Textile Factory', category: 'Manufacturing', icon: <Factory className="w-5 h-5 text-slate-700" />, code: 'TEXTILE_FACTORY', isLive: false },
+              { name: 'IT / Software Hub', category: 'Tech & BPM', icon: <Cpu className="w-5 h-5 text-indigo-600" />, code: 'IT_COMPANY', isLive: false },
+              { name: 'Auto Components', category: 'Engineering', icon: <Car className="w-5 h-5 text-orange-600" />, code: 'AUTO_COMPONENTS', isLive: false }
             ].map(b => (
               <Link
                 key={b.code}
                 to={`/start-business?type=${b.code}`}
-                className="p-3 bg-slate-50 hover:bg-blue-50 rounded border border-slate-200 hover:border-blue-300 transition text-center flex flex-col items-center justify-between group shadow-2xs"
+                className={`p-3 rounded border transition text-center flex flex-col items-center justify-between group shadow-2xs ${
+                  b.isLive
+                    ? 'bg-emerald-50/50 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-500'
+                    : 'bg-slate-50 hover:bg-slate-100/70 border-slate-200 opacity-90'
+                }`}
               >
+                <div className="w-full flex justify-end mb-1">
+                  {b.isLive ? (
+                    <span className="text-[8px] font-bold bg-emerald-600 text-white px-1.5 py-0.2 rounded uppercase tracking-wider">
+                      ✨ LIVE
+                    </span>
+                  ) : (
+                    <span className="text-[8px] font-medium bg-slate-200 text-slate-600 px-1 py-0.2 rounded uppercase">
+                      Phase 2
+                    </span>
+                  )}
+                </div>
                 <div className="w-10 h-10 rounded bg-white border border-slate-200 flex items-center justify-center mb-2 group-hover:scale-105 transition">
                   {b.icon}
                 </div>
@@ -184,8 +199,10 @@ export const LandingPage: React.FC = () => {
                   <h3 className="text-xs font-bold text-slate-900 group-hover:text-blue-700">{b.name}</h3>
                   <span className="text-[10px] text-slate-500 block mt-0.5">{b.category}</span>
                 </div>
-                <span className="text-[10px] text-blue-700 font-semibold mt-2 opacity-0 group-hover:opacity-100 transition">
-                  Explore Roadmap &rarr;
+                <span className={`text-[10px] font-semibold mt-2 ${
+                  b.isLive ? 'text-emerald-700 font-bold' : 'text-slate-400'
+                }`}>
+                  {b.isLive ? 'Full Setup &rarr;' : 'Explore'}
                 </span>
               </Link>
             ))}
